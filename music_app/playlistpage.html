@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><?= htmlspecialchars($playlistTitle) ?> — Çalma Listem</title>
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+    rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><?= htmlspecialchars($playlistTitle) ?></h2>
+    <a href="homepage.php" class="btn btn-outline-secondary">← Geri</a>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="get" action="playlistpage.php" class="row g-2 align-items-center">
+        <input type="hidden" name="id" value="<?= $playlistId ?>">
+        <div class="col-sm">
+          <input 
+            name="song" 
+            type="text" 
+            class="form-control" 
+            placeholder="Şarkı adı gir ve ara…" 
+            value="<?= htmlspecialchars($searchTerm) ?>">
+        </div>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-primary">Ara</button>
+        </div>
+      </form>
+
+      <?php if ($searchTerm !== ''): ?>
+        <hr>
+        <h6>Arama Sonuçları (<?= count($searchResults) ?>)</h6>
+        <?php if (empty($searchResults)): ?>
+          <p class="text-muted">Sonuç bulunamadı.</p>
+        <?php else: ?>
+          <ul class="list-group">
+            <?php foreach ($searchResults as $res): ?>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <?= htmlspecialchars($res['title']) ?>
+                <form method="post" class="m-0">
+                  <input type="hidden" name="playlist_id" value="<?= $playlistId ?>">
+                  <input type="hidden" name="song_id"     value="<?= $res['song_id'] ?>">
+                  <button type="submit" name="add_song" class="btn btn-sm btn-success">
+                    Ekle
+                  </button>
+                </form>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        <?php endif; ?>
+      <?php endif; ?>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Şarkılar (<?= count($songs) ?>)</h5>
+      <?php if (empty($songs)): ?>
+        <p class="text-muted">Henüz hiç şarkı eklenmemiş.</p>
+      <?php else: ?>
+        <div class="table-responsive">
+          <table class="table table-striped align-middle mb-0">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Başlık</th>
+                <th>Sanatçı</th>
+                <th>Ülke</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($songs as $idx => $s): ?>
+                <tr>
+                  <td><?= $idx+1 ?></td>
+                  <td>
+                    <a href="currentmusic.php?id=<?= $s['song_id'] ?>">
+                      <?= htmlspecialchars($s['title']) ?>
+                    </a>
+                  </td>
+                  <td><?= htmlspecialchars($s['artist']) ?></td>
+                  <td><?= htmlspecialchars($s['country_name']) ?></td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+
+<script 
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+Pop
+Rock
+Jazz
+Classical
+Hip Hop
+Electronic
+Country
+Reggae
+Blues
+Metal
+Punk
+Folk
+Soul
+Funk
+Disco
+House
+Post-Rock
+Synthpop
+Trip Hop
+Hard Rock

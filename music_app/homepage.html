@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hello, <?= htmlspecialchars($userName) ?>!</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container-fluid">
+  <div class="row">
+
+    <nav class="col-md-3 bg-white vh-100 p-3 border-end">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5>Çalma Listelerim</h5>
+        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addPlaylistModal">+</button>
+      </div>
+      <form action="homepage.php" method="get" class="mb-3">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control form-control-sm" placeholder="Liste/Şarkı ara">
+          <button class="btn btn-sm btn-success" type="submit">Ara</button>
+        </div>
+      </form>
+      <ul class="list-unstyled">
+        <?php foreach ($playlists as $pl): ?>
+          <li class="mb-2">
+            <a href="playlistpage.php?id=<?= $pl['playlist_id'] ?>" class="d-flex align-items-center text-decoration-none">
+              <img src="<?= filter_var($pl['image'], FILTER_VALIDATE_URL) ? $pl['image'] : 'uploads/'.$pl['image'] ?>"
+                   class="rounded me-2" width="40" height="40" alt="">
+              <span><?= htmlspecialchars($pl['title']) ?></span>
+            </a>
+          </li>
+        <?php endforeach; ?>
+         <li class="mt-4">
+          <a href="generalSQL.html" class="d-flex align-items-center text-decoration-none">
+            <span class="bi bi-kanban-fill me-2"></span> Genel SQL
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <main class="col-md-9 p-4">
+
+      <div class="mb-4 bg-success text-white py-2 px-3 rounded d-flex justify-content-between align-items-center">
+          <a href="homepage.php?logout=1" class="btn btn-light btn-sm">Logout</a>
+
+          <h4 class="mb-0">Welcome, <strong><?= htmlspecialchars($userName) ?></strong>!</h4>
+        </div>
+      <section class="bg-white p-3 mb-3 rounded shadow-sm">
+        <h5>Son 10 Dinlediğim Şarkı</h5>
+        <form action="homepage.php" method="get" class="mb-2">
+          <div class="input-group input-group-sm">
+            <input name="song_search" type="text" class="form-control" placeholder="Şarkı veya sanatçı ara">
+            <button class="btn btn-primary" type="submit">Git</button>
+          </div>
+        </form>
+        <?php if($searchError): ?>
+          <div class="alert alert-warning"><?= $searchError ?></div>
+        <?php endif; ?>
+        <ol class="list-group list-group-numbered">
+          <?php foreach ($history as $h): ?>
+            <li class="list-group-item">
+              <a href="currentmusic.php?id=<?= $h['song_id'] ?>"><?= htmlspecialchars($h['title']) ?></a>
+            </li>
+          <?php endforeach; ?>
+        </ol>
+      </section>
+
+      <section class="bg-white p-3 rounded shadow-sm">
+        <h5>Ülkemdeki En Popüler 5 Sanatçı</h5>
+        <form action="homepage.php" method="get" class="mb-2">
+          <div class="input-group input-group-sm">
+            <input name="artist_search" type="text" class="form-control" placeholder="Sanatçı adı ara">
+            <button class="btn btn-primary" type="submit">Ara</button>
+          </div>
+        </form>
+        <?php if($artistError): ?>
+          <div class="alert alert-warning"><?= $artistError ?></div>
+        <?php endif; ?>
+        <div class="row row-cols-1 row-cols-md-5 g-3">
+          <?php foreach ($artists as $art): ?>
+            <div class="col text-center">
+              <a href="artistpage.php?id=<?= $art['artist_id'] ?>" class="text-decoration-none">
+                <img src="<?= filter_var($art['image'], FILTER_VALIDATE_URL) ? $art['image'] : 'uploads/'.$art['image'] ?>"
+                     class="rounded-circle mb-2" width="60" height="60" alt="">
+                <div><?= htmlspecialchars($art['name']) ?></div>
+              </a>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div class="modal fade" id="addPlaylistModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form action="homepage.php" method="post" class="modal-content">
+      <input type="hidden" name="add_playlist" value="1">
+      <div class="modal-header">
+        <h5 class="modal-title">Yeni Çalma Listesi Ekle</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <?php if(!empty($_SESSION['playlist_error'])): ?>
+          <div class="alert alert-danger">
+            <?= htmlspecialchars($_SESSION['playlist_error']) ?>
+          </div>
+          <?php unset($_SESSION['playlist_error']); ?>
+        <?php endif; ?>
+        <div class="mb-3">
+          <label for="playlistTitle" class="form-label">Başlık</label>
+          <input id="playlistTitle" name="title" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="playlistDesc" class="form-label">Açıklama</label>
+          <textarea id="playlistDesc" name="description" class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
